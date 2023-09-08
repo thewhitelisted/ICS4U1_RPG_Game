@@ -1,7 +1,6 @@
 // copymon, an RPG created by Christopher Lee
 
 // TODO:
-		// Render player
 		// Player position, etc
 		// Enemies
 		// Death screen
@@ -23,6 +22,7 @@ public class Main {
 		BufferedImage tree = con.loadImage("tree.png");
 		BufferedImage water = con.loadImage("water.png");
 		BufferedImage none = con.loadImage("none.png");
+		BufferedImage player = con.loadImage("character.png");
 		
 		// start screen
 		start_menu(con);
@@ -30,6 +30,7 @@ public class Main {
 		// main loop
 		while (true) {
 			render_map(con, map, grass, tree, water, none);
+			con.drawImage(player, 120, 120);
 			con.repaint();
 		}
 	}
@@ -76,4 +77,3 @@ public class Main {
 		}
 	}
 }
-
