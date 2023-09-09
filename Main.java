@@ -6,6 +6,8 @@
 		// Death screen
 		// Stats display
 		// Fighting
+			// pokemon style fighting?
+		// how to clear text????
 
 import arc.*;
 import java.awt.image.BufferedImage;
@@ -13,8 +15,11 @@ import java.awt.Color;
 
 public class Main {
 	public static void main (String[] args) {
+		// start screen
+		start_menu();
+		
 		// 30x30 sprites, 600x600 minimum for map alone
-		Console con = new Console(1000,600);
+		Console con = new Console("Copymon", 1000,600);
 		
 		// map and textures, see function render_map()
 		String[][] strMap = load_map("map.csv");
@@ -22,15 +27,18 @@ public class Main {
 		BufferedImage imgTree = con.loadImage("tree.png");
 		BufferedImage imgWater = con.loadImage("water.png");
 		BufferedImage imgNone = con.loadImage("none.png");
-		BufferedImage imgPlayer = con.loadImage("character.png");
 		
-		// start screen
-		start_menu(con);
+		// player render and stats
+		BufferedImage imgPlayer = con.loadImage("character.png");
+		int intpx = 4;
+		int intpy = 4;
+		int intphp = 100;
 		
 		// main loop
 		while (true) {
 			render_map(con, strMap, imgGrass, imgTree, imgWater, imgNone);
-			con.drawImage(imgPlayer, 120, 120);
+			con.drawImage(imgPlayer, intpx*30, intpy*30);
+			display_stats(con);
 			con.repaint();
 		}
 	}
@@ -40,7 +48,12 @@ public class Main {
 		con.drawString("Copymon.", 440, 250);
 		con.drawString("Press any key to continue", 335, 300);
 		con.getKey();
-		con.setBackgroundColor(new Color(0,0,0));
+		// TODO: how to clear text???
+	}
+	
+	// function to display player stats
+	public static void display_stats(Console con) {
+		con.drawString("Player stats", 750, 250);
 	}
 	
 	// function to load a csv file into a 2x2 array of length 20
