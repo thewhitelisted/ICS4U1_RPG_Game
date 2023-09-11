@@ -1,13 +1,11 @@
 // copymon, an RPG created by Christopher Lee
 
 // TODO:
-		// Player position, etc
 		// Enemies
-		// Death screen
 		// Stats display
 		// Fighting
 			// pokemon style fighting?
-		// how to clear text????
+		// second map
 
 import arc.*;
 import java.awt.image.BufferedImage;
@@ -15,11 +13,11 @@ import java.awt.Color;
 
 public class Main {
 	public static void main (String[] args) {
-		// start screen
-		start_menu();
-		
 		// 30x30 sprites, 600x600 minimum for map alone
 		Console con = new Console("Copymon", 1000,600);
+		
+		// start screen
+		start_menu(con);
 		
 		// map and textures, see function render_map()
 		String[][] strMap = load_map("map.csv");
@@ -33,6 +31,8 @@ public class Main {
 		int intpx = 4;
 		int intpy = 4;
 		int intphp = 100;
+		int intKeyPressed;
+		
 		
 		// main loop
 		while (true) {
@@ -40,6 +40,27 @@ public class Main {
 			con.drawImage(imgPlayer, intpx*30, intpy*30);
 			display_stats(con);
 			con.repaint();
+			
+			// movement behavior
+			intKeyPressed = con.getKey();
+			// w
+			if (intKeyPressed == 119 || intKeyPressed == 87 && can_move(intpx, intpy-1, strMap)) {
+				intpy--;
+			// s
+			} else if (intKeyPressed == 115 || intKeyPressed == 83 && can_move(intpx, intpy+1, strMap)) {
+				intpy++;
+			// a
+			} else if (intKeyPressed == 97 || intKeyPressed == 65 && can_move(intpx-1, intpy, strMap)) {
+				intpx--;
+			// d
+			} else if (intKeyPressed == 100 || intKeyPressed == 68 && can_move(intpx+1, intpy, strMap)) {
+				intpx++;
+			}
+			
+			// end game if hits water
+			if (is_water(intpx, intpy, strMap)) {
+				death_menu(con);
+			}
 		}
 	}
 	
@@ -48,12 +69,30 @@ public class Main {
 		con.drawString("Copymon.", 440, 250);
 		con.drawString("Press any key to continue", 335, 300);
 		con.getKey();
-		// TODO: how to clear text???
+		con.setBackgroundColor(new Color(0,0,0));
+	}
+	
+	// function to display death menu
+	public static void death_menu(Console con) {
+		con.setBackgroundColor(new Color(0,0,0));
+		con.setDrawColor(new Color(255,255,255));
+		con.drawString("You died!", 440, 250);
+		con.drawString("Press any key to close prompt", 325, 300);
+		con.getKey();
+		for (int i = 3; i > 0; i--) {
+			con.setBackgroundColor(new Color(0,0,0));
+			con.setDrawColor(new Color(255,255,255));
+			con.drawString("Closing in " + (i), 425, 300);
+			con.sleep(1000);
+		}
+		con.closeConsole();
+		
 	}
 	
 	// function to display player stats
 	public static void display_stats(Console con) {
-		con.drawString("Player stats", 750, 250);
+		con.setDrawColor(new Color(255,255,255));
+		con.drawString("Player stats", 650, 50);
 	}
 	
 	// function to load a csv file into a 2x2 array of length 20
@@ -88,5 +127,15 @@ public class Main {
 				}
 			}
 		}
+	}
+	
+	// function to check if you can move to a square
+	public static boolean can_move(int intx, int inty, String[][] strMap) {
+		return !strMap[inty][intx].equals("t");
+	}
+	
+	// function to check if you are on water
+	public static boolean is_water(int intpx, int intpy, String[][] strMap) {
+		return strMap[intpy][intpx].equals("w");
 	}
 }
