@@ -2,9 +2,11 @@
 
 // TODO:
 		// Enemies
+			// enemy position, randomly generated?
 		// Stats display
 		// Fighting
 			// pokemon style fighting?
+			// pokemon are enemies, once killed, you can turn into them
 		// second map
 
 import arc.*;
@@ -24,25 +26,31 @@ public class Main {
 		BufferedImage imgGrass = con.loadImage("grass.png");
 		BufferedImage imgTree = con.loadImage("tree.png");
 		BufferedImage imgWater = con.loadImage("water.png");
+		BufferedImage imgBuilding = con.loadImage("building.png");
 		BufferedImage imgNone = con.loadImage("none.png");
 		
 		// player render and stats
 		BufferedImage imgPlayer = con.loadImage("character.png");
 		int intpx = 4;
 		int intpy = 4;
-		int intphp = 100;
+		int intphp = 50;
 		int intKeyPressed;
+		
+		// enemy renders
+		BufferedImage imgSquirt = con.loadImage("squirtle.png");
+		BufferedImage imgChar = con.loadImage("charmander.png");
 		
 		
 		// main loop
 		while (true) {
-			render_map(con, strMap, imgGrass, imgTree, imgWater, imgNone);
+			render_map(con, strMap, imgGrass, imgTree, imgWater, imgBuilding, imgNone);
 			con.drawImage(imgPlayer, intpx*30, intpy*30);
 			display_stats(con);
 			con.repaint();
 			
 			// movement behavior
 			intKeyPressed = con.getKey();
+			System.out.println(intKeyPressed);
 			// w
 			if (intKeyPressed == 119 || intKeyPressed == 87 && can_move(intpx, intpy-1, strMap)) {
 				intpy--;
@@ -108,11 +116,12 @@ public class Main {
 				strLoaded_map[i][j] = strMap_line[j];
 			}
 		}
+		txtMap.close();
 		return strLoaded_map;
 	}
 	
 	// function to render the map
-	public static void render_map(Console con, String[][] strMap, BufferedImage imgGrass, BufferedImage imgTree, BufferedImage imgWater, BufferedImage imgNone) {
+	public static void render_map(Console con, String[][] strMap, BufferedImage imgGrass, BufferedImage imgTree, BufferedImage imgWater, BufferedImage imgBuilding, BufferedImage imgNone) {
 		// render code, cool wonky advanced stuff
 		for (int i = 0; i < 20; i++) {
 			for (int j = 0; j < 20; j++) {
@@ -122,6 +131,8 @@ public class Main {
 					con.drawImage(imgTree, j*30, i*30);
 				} else if (strMap[i][j].equals("w")) {
 					con.drawImage(imgWater, j*30, i*30);
+				} else if (strMap[i][j].equals("b")) {
+					con.drawImage(imgBuilding, j*30, i*30);
 				} else {
 					con.drawImage(imgNone, j*30, i*30);
 				}
