@@ -29,44 +29,52 @@ public class Main {
 		BufferedImage imgBuilding = con.loadImage("building.png");
 		BufferedImage imgNone = con.loadImage("none.png");
 		
-		// player render and stats
-		BufferedImage imgPlayer = con.loadImage("character.png");
-		int intpx = 4;
-		int intpy = 4;
-		int intphp = 50;
+		// player render and stats.. I COULD USE OBJECTS BUT I WON'T 
+		Player player = new Player(con.loadImage("character.png"));
 		int intKeyPressed;
 		
-		// enemy renders
-		BufferedImage imgSquirt = con.loadImage("squirtle.png");
+		// enemy renders, make location random
+		Player squirtle = new Player(con.loadImage("squirtle.png"), 16, 16);
 		BufferedImage imgChar = con.loadImage("charmander.png");
+		
 		
 		
 		// main loop
 		while (true) {
+			display_stats(con, player.intphp);
 			render_map(con, strMap, imgGrass, imgTree, imgWater, imgBuilding, imgNone);
-			con.drawImage(imgPlayer, intpx*30, intpy*30);
-			display_stats(con);
+			con.drawImage(player.icon(), player.intpx*30, player.intpy*30);
 			con.repaint();
 			
 			// movement behavior
 			intKeyPressed = con.getKey();
 			System.out.println(intKeyPressed);
 			// w
-			if (intKeyPressed == 119 || intKeyPressed == 87 && can_move(intpx, intpy-1, strMap)) {
-				intpy--;
+			if (intKeyPressed == 119 || intKeyPressed == 87 && can_move(player.intpx, player.intpy-1, strMap)) {
+				player.intpy--;
 			// s
-			} else if (intKeyPressed == 115 || intKeyPressed == 83 && can_move(intpx, intpy+1, strMap)) {
-				intpy++;
+			} else if (intKeyPressed == 115 || intKeyPressed == 83 && can_move(player.intpx, player.intpy+1, strMap)) {
+				player.intpy++;
 			// a
-			} else if (intKeyPressed == 97 || intKeyPressed == 65 && can_move(intpx-1, intpy, strMap)) {
-				intpx--;
+			} else if (intKeyPressed == 97 || intKeyPressed == 65 && can_move(player.intpx-1, player.intpy, strMap)) {
+				player.intpx--;
 			// d
-			} else if (intKeyPressed == 100 || intKeyPressed == 68 && can_move(intpx+1, intpy, strMap)) {
-				intpx++;
+			} else if (intKeyPressed == 100 || intKeyPressed == 68 && can_move(player.intpx+1, player.intpy, strMap)) {
+				player.intpx++;
 			}
 			
 			// end game if hits water
-			if (is_water(intpx, intpy, strMap)) {
+			if (is_water(player.intpx, player.intpy, strMap)) {
+				death_menu(con);
+			} else if (is_building(player.intpx, player.intpy, strMap) && player.intphp < 50) {
+				if (player.intphp + 10 > 50) {
+					player.intphp = 50;
+				} else {
+					player.intphp += 10;
+				}
+			} 
+			
+			if (player.is_dead()) {
 				death_menu(con);
 			}
 		}
@@ -98,9 +106,12 @@ public class Main {
 	}
 	
 	// function to display player stats
-	public static void display_stats(Console con) {
+	public static void display_stats(Console con, int intphp) {
+		con.setDrawColor(new Color(0,0,0));
+		con.fillRect(601, 0, 399, 600);
 		con.setDrawColor(new Color(255,255,255));
 		con.drawString("Player stats", 650, 50);
+		con.drawString("	HP: " + intphp, 650, 100);
 	}
 	
 	// function to load a csv file into a 2x2 array of length 20
@@ -148,5 +159,10 @@ public class Main {
 	// function to check if you are on water
 	public static boolean is_water(int intpx, int intpy, String[][] strMap) {
 		return strMap[intpy][intpx].equals("w");
+	}
+	
+	// function to check if you are in a building
+	public static boolean is_building(int intpx, int intpy, String[][] strMap) {
+		return strMap[intpy][intpx].equals("b");
 	}
 }
