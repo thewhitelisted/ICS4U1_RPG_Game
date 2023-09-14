@@ -33,13 +33,13 @@ public class Main {
 		int intKeyPressed;
 		
 		// enemy renders, make location random
-		Entity squirtle = new Entity(con.loadImage("squirtle.png"), 16, 16, 5, 10);
-		BufferedImage imgChar = con.loadImage("charmander.png");
+		Entity[] enemies = {new Entity(con.loadImage("squirtle.png"), 12, 13, 5, 10), new Entity(con.loadImage("charmander.png"), 3, 12, 10, 15)};
 		
 		// main loop
 		while (true) {
 			display_stats(con, player.intphp, player.intatk, player.intdef);
 			render_map(con, strMap, imgGrass, imgTree, imgWater, imgBuilding, imgNone);
+			render_enemies(con, enemies);
 			con.drawImage(player.icon(), player.intpx*30, player.intpy*30);
 			con.repaint();
 			
@@ -62,7 +62,7 @@ public class Main {
 			// end game if hits water
 			if (player.on_water(strMap)) {
 				death_menu(con);
-			} else if (is_building(player.intpx, player.intpy, strMap) && player.intphp < 50) {
+			} else if (player.in_building(strMap) && player.intphp < 50) {
 				if (player.intphp + 10 > 50) {
 					player.intphp = 50;
 				} else {
@@ -149,8 +149,9 @@ public class Main {
 		}
 	}
 	
-	// function to check if you are in a building
-	public static boolean is_building(int intpx, int intpy, String[][] strMap) {
-		return strMap[intpy][intpx].equals("b");
+	public static void render_enemies(Console con, Entity[] enemies) {
+		for (int i = 0; i < enemies.length; i++) {
+			con.drawImage(enemies[i].icon(), enemies[i].intpx * 30, enemies[i].intpy * 30);
+		}
 	}
 }

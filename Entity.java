@@ -18,6 +18,10 @@ public class Entity {
 	
 	public Entity(BufferedImage imgIcon, int intpx, int intpy, int intatk, int intdef) {
 		this.imgIcon = imgIcon;
+		this.intpx = intpx;
+		this.intpy = intpy;
+		this.intatk = intatk;
+		this.intdef = intdef;
 	}
 	
 	// get icon
@@ -50,5 +54,9 @@ class Player extends Entity {
 	// check if player is on water
 	public boolean on_water(String strMap[][]) {
 		return strMap[this.intpy][this.intpx].equals("w");
+	}
+	
+	public boolean in_building(String strMap[][]) {
+		return strMap[this.intpy][this.intpx].equals("b");
 	}
 }
