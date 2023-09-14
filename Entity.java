@@ -6,6 +6,7 @@ public class Entity {
 	// attributes
 	BufferedImage imgIcon;
 	BufferedImage imgBattleicon;
+	BufferedImage imgDMG;
 	int intpx = 4;
 	int intpy = 4;
 	int intphp = 50;
@@ -41,11 +42,11 @@ class Player extends Entity {
 	// attributes
 	BufferedImage imgIcon;
 	BufferedImage imgBattleicon;
+	BufferedImage imgDMG;
 	
 	// constructor
 	public Player(BufferedImage imgIcon) {
 		super(imgIcon);
-		this.imgIcon = imgIcon;
 	}
 	
 	// check if player can move to square

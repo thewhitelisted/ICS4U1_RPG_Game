@@ -5,7 +5,6 @@
 			// enemy position, randomly generated?
 		// Fighting
 			// pokemon style fighting?
-			// pokemon are enemies, once killed, you can turn into them
 		// second map
 
 import arc.*;
@@ -36,6 +35,8 @@ public class Main {
 		// enemy renders, make location random
 		Entity[] enemies = {new Entity(con.loadImage("squirtle.png"), 12, 13, 5, 10), new Entity(con.loadImage("charmander.png"), 3, 12, 10, 15)};
 		enemies[0].imgBattleicon = con.loadImage("squirtle_battle.png");
+		enemies[0].imgDMG = con.loadImage("squirtle_atk.png");
+		enemies[1].imgBattleicon = con.loadImage("charmander_battle.png");
 		
 		// main loop
 		while (true) {
@@ -46,7 +47,6 @@ public class Main {
 			con.repaint();
 			
 			// movement behavior
-			fight_enemy(con, enemies[0], player);
 			intKeyPressed = con.getKey();
 			// w
 			if (intKeyPressed == 119 || intKeyPressed == 87 && player.can_move(strMap, 0, -1)) {
@@ -73,8 +73,10 @@ public class Main {
 				}
 			} 
 			
-			if (player.is_dead()) {
-				death_menu(con);
+			for (int i = 0; i < enemies.length; i++) {
+				if (player.intpx == enemies[i].intpx && player.intpy == enemies[i].intpy && enemies[i].intphp > 0) {
+					fight_enemy(con, enemies[i], player);
+				}
 			}
 		}
 	}
@@ -113,6 +115,14 @@ public class Main {
 		con.drawString("HP: " + intphp, 650, 100);
 		con.drawString("Attack: " + intatk, 650, 150);
 		con.drawString("Defence: " + intdef, 800, 100);
+	}
+	
+	// function to display enemy stats
+	public static void display_estats(Console con, int intphp, int intatk, int intdef) {
+		con.drawString("Enemy stats", 650, 225);
+		con.drawString("HP: " + intphp, 650, 275);
+		con.drawString("Attack: " + intatk, 650, 325);
+		con.drawString("Defence: " + intdef, 800, 275);
 	}
 	
 	// function to load a csv file into a 2x2 array of length 20
@@ -161,11 +171,17 @@ public class Main {
 	
 	// function for battle sequence
 	public static void fight_enemy(Console con, Entity enemy, Player player) {
+		// load images
 		BufferedImage imgbg = con.loadImage("battle_bg.png");
 		BufferedImage imgatkbtn = con.loadImage("attack.png");
 		con.setBackgroundColor(new Color(0,0,0));
 		con.setDrawColor(new Color(255,255,255));
+		
+		// display stats
 		display_stats(con, player.intphp, player.intatk, player.intdef);
+		display_estats(con, enemy.intphp, enemy.intatk, enemy.intdef);
+		
+		// draw screen
 		con.drawImage(imgbg, 0,0);
 		con.drawImage(imgatkbtn, 650, 375);
 		con.drawImage(enemy.imgBattleicon, 375, 250);
@@ -173,4 +189,8 @@ public class Main {
 		con.repaint();
 		con.getKey();
 	}
+	
+	/*public static void user_turn(Console con, Player player) {
+		
+	}*/
 }
