@@ -169,25 +169,54 @@ public class Main {
 		}
 	}
 	
-	// function for battle sequence
-	public static void fight_enemy(Console con, Entity enemy, Player player) {
-		// load images
-		BufferedImage imgbg = con.loadImage("battle_bg.png");
-		BufferedImage imgatkbtn = con.loadImage("attack.png");
+	public static void render_battle(Console con, Entity enemy, Player player, BufferedImage imgbg, BufferedImage imgatkbtn) {
 		con.setBackgroundColor(new Color(0,0,0));
 		con.setDrawColor(new Color(255,255,255));
 		
 		// display stats
 		display_stats(con, player.intphp, player.intatk, player.intdef);
 		display_estats(con, enemy.intphp, enemy.intatk, enemy.intdef);
-		
+			
 		// draw screen
 		con.drawImage(imgbg, 0,0);
 		con.drawImage(imgatkbtn, 650, 375);
 		con.drawImage(enemy.imgBattleicon, 375, 250);
 		con.drawImage(player.imgBattleicon, 50, 350);
-		con.repaint();
-		con.getKey();
+	}
+	
+	// function for battle sequence
+	public static void fight_enemy(Console con, Entity enemy, Player player) {
+		// load images
+		BufferedImage imgbg = con.loadImage("battle_bg.png");
+		BufferedImage imgatkbtn = con.loadImage("attack.png");
+		
+		while (true) {
+			render_battle(con, enemy, player, imgbg, imgatkbtn);
+			con.repaint();
+			
+			while (true) {
+				con.sleep(16);
+				int intMouse = con.currentMouseButton();
+				con.sleep(16);
+				if (con.currentMouseButton() == 1) {
+					break;
+				}
+			}
+			
+			if (con.currentMouseX() > 650 && con.currentMouseX() < 950 && con.currentMouseY() < 475 && con.currentMouseY() > 375) {
+				System.out.println("bam");
+				enemy.intphp-= 10;
+			}
+			
+			if (enemy.intphp < 1) {
+				break;
+			}
+			con.sleep(50);
+			
+			
+			
+		}
+		
 	}
 	
 	/*public static void user_turn(Console con, Player player) {
