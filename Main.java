@@ -1,10 +1,6 @@
 // copymon, an RPG created by Christopher Lee
 
 // TODO:
-		// Enemies
-			// enemy position, randomly generated?
-		// Fighting
-			// pokemon style fighting?
 		// second map
 
 import arc.*;
@@ -37,6 +33,7 @@ public class Main {
 		enemies[0].imgBattleicon = con.loadImage("squirtle_battle.png");
 		enemies[0].imgDMG = con.loadImage("squirtle_atk.png");
 		enemies[1].imgBattleicon = con.loadImage("charmander_battle.png");
+		enemies[1].imgDMG = con.loadImage("charmander_atk.png");
 		
 		// main loop
 		while (true) {
@@ -81,6 +78,11 @@ public class Main {
 		}
 	}
 	
+	public static void reset_screen(Console con) {
+		con.setBackgroundColor(new Color(0,0,0));
+		con.setDrawColor(new Color(255,255,255));
+	}
+	
 	// function to display start menu
 	public static void start_menu(Console con) {
 		con.drawString("Copymon.", 440, 250);
@@ -91,8 +93,7 @@ public class Main {
 	
 	// function to display death menu
 	public static void death_menu(Console con) {
-		con.setBackgroundColor(new Color(0,0,0));
-		con.setDrawColor(new Color(255,255,255));
+		reset_screen(con);
 		con.drawString("You died!", 440, 250);
 		con.drawString("Press any key to close prompt", 325, 300);
 		con.getKey();
@@ -165,13 +166,14 @@ public class Main {
 	// function to render enemies on the map
 	public static void render_enemies(Console con, Entity[] enemies) {
 		for (int i = 0; i < enemies.length; i++) {
-			con.drawImage(enemies[i].icon(), enemies[i].intpx * 30, enemies[i].intpy * 30);
+			if (enemies[i].intphp > 1) {
+				con.drawImage(enemies[i].icon(), enemies[i].intpx * 30, enemies[i].intpy * 30);
+			}
 		}
 	}
 	
 	public static void render_battle(Console con, Entity enemy, Player player, BufferedImage imgbg, BufferedImage imgatkbtn) {
-		con.setBackgroundColor(new Color(0,0,0));
-		con.setDrawColor(new Color(255,255,255));
+		reset_screen(con);
 		
 		// display stats
 		display_stats(con, player.intphp, player.intatk, player.intdef);
@@ -182,6 +184,7 @@ public class Main {
 		con.drawImage(imgatkbtn, 650, 375);
 		con.drawImage(enemy.imgBattleicon, 375, 250);
 		con.drawImage(player.imgBattleicon, 50, 350);
+		con.repaint();
 	}
 	
 	// function for battle sequence
@@ -190,10 +193,12 @@ public class Main {
 		BufferedImage imgbg = con.loadImage("battle_bg.png");
 		BufferedImage imgatkbtn = con.loadImage("attack.png");
 		
+		// battle loop
 		while (true) {
 			render_battle(con, enemy, player, imgbg, imgatkbtn);
 			con.repaint();
 			
+			// await button press
 			while (true) {
 				con.sleep(16);
 				int intMouse = con.currentMouseButton();
@@ -203,23 +208,56 @@ public class Main {
 				}
 			}
 			
+			// check which button pressed
 			if (con.currentMouseX() > 650 && con.currentMouseX() < 950 && con.currentMouseY() < 475 && con.currentMouseY() > 375) {
-				System.out.println("bam");
-				enemy.intphp-= 10;
+				// algorithm for damage
+				int intpdmg = (int)(30*player.intatk)/(enemy.intdef+30);
+				if (enemy.intphp - intpdmg < 0) {
+					enemy.intphp -= enemy.intphp;
+				} else {
+					enemy.intphp -= intpdmg;
+				} 
+				
+				// attack text bubble
+				con.setDrawColor(new Color(0,0,0));
+				con.fillRect(10, 490, 580, 100);
+				con.setDrawColor(new Color(255,255,255));
+				con.drawRect(20, 500, 560, 80);
+				con.drawString("You attacked for " + intpdmg + " damage!", 30, 510);
+				con.repaint();
+				con.sleep(1500);
+				
+				// attack animation
+				render_battle(con, enemy, player, imgbg, imgatkbtn);
+				con.drawImage(enemy.imgDMG, 375, 250);
+				con.repaint();
+				con.sleep(600);
 			}
-			
 			if (enemy.intphp < 1) {
 				break;
 			}
-			con.sleep(50);
+			render_battle(con, enemy, player, imgbg, imgatkbtn);
+			con.repaint();
 			
+			// enemy damage
+			int intedmg = (int)(20*enemy.intatk)/(player.intdef+20);
+			if (player.intphp - intedmg < 0) {
+				player.intphp -= player.intphp;
+			} else {
+				player.intphp -= intedmg;
+			}
 			
-			
+			// enemy attack text
+			con.setDrawColor(new Color(0,0,0));
+			con.fillRect(10, 490, 580, 100);
+			con.setDrawColor(new Color(255,255,255));
+			con.drawRect(20, 500, 560, 80);
+			con.drawString("Enemy attacked for " + intedmg + " damage!", 30, 510);
+			con.repaint();
+			con.sleep(1500);
+			if (player.intphp < 1) {
+				break;
+			}
 		}
-		
 	}
-	
-	/*public static void user_turn(Console con, Player player) {
-		
-	}*/
 }
