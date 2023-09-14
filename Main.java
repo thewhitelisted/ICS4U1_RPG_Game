@@ -44,6 +44,7 @@ public class Main {
 			con.repaint();
 			
 			// movement behavior
+			// fight_enemy(con, enemies[0], player);
 			intKeyPressed = con.getKey();
 			// w
 			if (intKeyPressed == 119 || intKeyPressed == 87 && player.can_move(strMap, 0, -1)) {
@@ -109,7 +110,7 @@ public class Main {
 		con.drawString("Player stats", 650, 50);
 		con.drawString("HP: " + intphp, 650, 100);
 		con.drawString("Attack: " + intatk, 650, 150);
-		con.drawString("Defence: " + intdef, 650, 200);
+		con.drawString("Defence: " + intdef, 800, 100);
 	}
 	
 	// function to load a csv file into a 2x2 array of length 20
@@ -153,5 +154,17 @@ public class Main {
 		for (int i = 0; i < enemies.length; i++) {
 			con.drawImage(enemies[i].icon(), enemies[i].intpx * 30, enemies[i].intpy * 30);
 		}
+	}
+	
+	public static void fight_enemy(Console con, Entity enemy, Player player) {
+		BufferedImage imgbg = con.loadImage("battle_bg.png");
+		BufferedImage imgatkbtn = con.loadImage("attack.png");
+		con.setBackgroundColor(new Color(0,0,0));
+		con.setDrawColor(new Color(255,255,255));
+		display_stats(con, player.intphp, player.intatk, player.intdef);
+		con.drawImage(imgbg, 0,0);
+		con.drawImage(imgatkbtn, 650, 375);
+		con.repaint();
+		// con.getKey();
 	}
 }
