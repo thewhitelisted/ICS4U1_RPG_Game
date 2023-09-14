@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 public class Entity {
 	// attributes
 	BufferedImage imgIcon;
+	BufferedImage imgBattleicon;
 	int intpx = 4;
 	int intpy = 4;
 	int intphp = 50;
@@ -39,6 +40,7 @@ public class Entity {
 class Player extends Entity {
 	// attributes
 	BufferedImage imgIcon;
+	BufferedImage imgBattleicon;
 	
 	// constructor
 	public Player(BufferedImage imgIcon) {

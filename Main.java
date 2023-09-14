@@ -30,10 +30,12 @@ public class Main {
 		
 		// player render and stats... using objects cuz im cool like that
 		Player player = new Player(con.loadImage("character.png"));
+		player.imgBattleicon = con.loadImage("player_battle.png");
 		int intKeyPressed;
 		
 		// enemy renders, make location random
 		Entity[] enemies = {new Entity(con.loadImage("squirtle.png"), 12, 13, 5, 10), new Entity(con.loadImage("charmander.png"), 3, 12, 10, 15)};
+		enemies[0].imgBattleicon = con.loadImage("squirtle_battle.png");
 		
 		// main loop
 		while (true) {
@@ -44,7 +46,7 @@ public class Main {
 			con.repaint();
 			
 			// movement behavior
-			// fight_enemy(con, enemies[0], player);
+			fight_enemy(con, enemies[0], player);
 			intKeyPressed = con.getKey();
 			// w
 			if (intKeyPressed == 119 || intKeyPressed == 87 && player.can_move(strMap, 0, -1)) {
@@ -150,12 +152,14 @@ public class Main {
 		}
 	}
 	
+	// function to render enemies on the map
 	public static void render_enemies(Console con, Entity[] enemies) {
 		for (int i = 0; i < enemies.length; i++) {
 			con.drawImage(enemies[i].icon(), enemies[i].intpx * 30, enemies[i].intpy * 30);
 		}
 	}
 	
+	// function for battle sequence
 	public static void fight_enemy(Console con, Entity enemy, Player player) {
 		BufferedImage imgbg = con.loadImage("battle_bg.png");
 		BufferedImage imgatkbtn = con.loadImage("attack.png");
@@ -164,7 +168,9 @@ public class Main {
 		display_stats(con, player.intphp, player.intatk, player.intdef);
 		con.drawImage(imgbg, 0,0);
 		con.drawImage(imgatkbtn, 650, 375);
+		con.drawImage(enemy.imgBattleicon, 375, 250);
+		con.drawImage(player.imgBattleicon, 50, 350);
 		con.repaint();
-		// con.getKey();
+		con.getKey();
 	}
 }
