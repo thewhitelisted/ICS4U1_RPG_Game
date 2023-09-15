@@ -6,6 +6,7 @@
 import arc.*;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
+import java.util.Random;
 
 public class Main {
 	public static void main (String[] args) {
@@ -29,7 +30,7 @@ public class Main {
 		int intKeyPressed;
 		
 		// enemy renders, make location random
-		Entity[] enemies = {new Entity(con.loadImage("squirtle.png"), 12, 13, 5, 10), new Entity(con.loadImage("charmander.png"), 3, 12, 10, 15)};
+		Entity[] enemies = {new Entity(con.loadImage("squirtle.png"), 14, 13, 10, 15), new Entity(con.loadImage("charmander.png"), 3, 12, 15, 20)};
 		enemies[0].imgBattleicon = con.loadImage("squirtle_battle.png");
 		enemies[0].imgDMG = con.loadImage("squirtle_atk.png");
 		enemies[1].imgBattleicon = con.loadImage("charmander_battle.png");
@@ -74,6 +75,9 @@ public class Main {
 				if (player.intpx == enemies[i].intpx && player.intpy == enemies[i].intpy && enemies[i].intphp > 0) {
 					fight_enemy(con, enemies[i], player);
 				}
+			}
+			if (player.intphp < 1) {
+				death_menu(con);
 			}
 		}
 	}
@@ -172,7 +176,7 @@ public class Main {
 		}
 	}
 	
-	public static void render_battle(Console con, Entity enemy, Player player, BufferedImage imgbg, BufferedImage imgatkbtn) {
+	public static void render_battle(Console con, Entity enemy, Player player, BufferedImage imgbg, BufferedImage imgatkbtn, BufferedImage imgrunbtn) {
 		reset_screen(con);
 		
 		// display stats
@@ -182,6 +186,7 @@ public class Main {
 		// draw screen
 		con.drawImage(imgbg, 0,0);
 		con.drawImage(imgatkbtn, 650, 375);
+		con.drawImage(imgrunbtn, 650, 500);
 		con.drawImage(enemy.imgBattleicon, 375, 250);
 		con.drawImage(player.imgBattleicon, 50, 350);
 		con.repaint();
@@ -192,10 +197,13 @@ public class Main {
 		// load images
 		BufferedImage imgbg = con.loadImage("battle_bg.png");
 		BufferedImage imgatkbtn = con.loadImage("attack.png");
+		BufferedImage imgrunbtn = con.loadImage("run.png");
+		
+		boolean run = false;
 		
 		// battle loop
 		while (true) {
-			render_battle(con, enemy, player, imgbg, imgatkbtn);
+			render_battle(con, enemy, player, imgbg, imgatkbtn, imgrunbtn);
 			con.repaint();
 			
 			// await button press
@@ -203,44 +211,76 @@ public class Main {
 				con.sleep(16);
 				int intMouse = con.currentMouseButton();
 				con.sleep(16);
+				
 				if (con.currentMouseButton() == 1) {
-					break;
+					// check which button pressed
+					if (con.currentMouseX() > 650 && con.currentMouseX() < 950 && con.currentMouseY() < 475 && con.currentMouseY() > 375) {
+						// algorithm for damage
+						int intpdmg;
+						if (crit_check()) {
+							intpdmg = (int)((30*player.intatk*1.5)/(enemy.intdef+30));
+						} else {
+							intpdmg = (int)(30*player.intatk)/(enemy.intdef+30);
+						}
+						
+						if (enemy.intphp - intpdmg < 0) {
+							enemy.intphp -= enemy.intphp;
+						} else {
+							enemy.intphp -= intpdmg;
+						} 
+						
+						// attack text bubble
+						con.setDrawColor(new Color(0,0,0));
+						con.fillRect(10, 490, 580, 100);
+						con.setDrawColor(new Color(255,255,255));
+						con.drawRect(20, 500, 560, 80);
+						con.drawString("You attacked for " + intpdmg + " damage!", 30, 510);
+						con.repaint();
+						con.sleep(1500);
+						
+						// attack animation
+						render_battle(con, enemy, player, imgbg, imgatkbtn, imgrunbtn);
+						con.drawImage(enemy.imgDMG, 375, 250);
+						con.repaint();
+						con.sleep(600);
+						break;
+					} else if (con.currentMouseX() > 650 && con.currentMouseX() < 950 && con.currentMouseY() < 575 && con.currentMouseY() > 500) {
+						run = true;
+						break;
+					}
 				}
 			}
 			
-			// check which button pressed
-			if (con.currentMouseX() > 650 && con.currentMouseX() < 950 && con.currentMouseY() < 475 && con.currentMouseY() > 375) {
-				// algorithm for damage
-				int intpdmg = (int)(30*player.intatk)/(enemy.intdef+30);
-				if (enemy.intphp - intpdmg < 0) {
-					enemy.intphp -= enemy.intphp;
-				} else {
-					enemy.intphp -= intpdmg;
-				} 
-				
-				// attack text bubble
+			if (run) {
+				enemy.intphp = 50;
+				break;
+			}
+			
+			// if you beat an enemy, gain stats
+			if (enemy.intphp < 1) {
+				player.intdef += 5;
+				player.intatk += 5;
 				con.setDrawColor(new Color(0,0,0));
 				con.fillRect(10, 490, 580, 100);
 				con.setDrawColor(new Color(255,255,255));
 				con.drawRect(20, 500, 560, 80);
-				con.drawString("You attacked for " + intpdmg + " damage!", 30, 510);
+				con.drawString("You won! You gained 5 atk and 5 def!", 30, 510);
 				con.repaint();
 				con.sleep(1500);
 				
-				// attack animation
-				render_battle(con, enemy, player, imgbg, imgatkbtn);
-				con.drawImage(enemy.imgDMG, 375, 250);
-				con.repaint();
-				con.sleep(600);
-			}
-			if (enemy.intphp < 1) {
 				break;
 			}
-			render_battle(con, enemy, player, imgbg, imgatkbtn);
+			render_battle(con, enemy, player, imgbg, imgatkbtn, imgrunbtn);
 			con.repaint();
 			
 			// enemy damage
-			int intedmg = (int)(20*enemy.intatk)/(player.intdef+20);
+			int intedmg;
+			if (enemy_crit()) {
+				intedmg = (int)((25*enemy.intatk*1.3)/(player.intdef+25));
+			} else {
+				intedmg = (int)(20*enemy.intatk)/(player.intdef+20);
+			}
+			
 			if (player.intphp - intedmg < 0) {
 				player.intphp -= player.intphp;
 			} else {
@@ -259,5 +299,17 @@ public class Main {
 				break;
 			}
 		}
+	}
+	
+	public static boolean crit_check() {
+		// random stuff
+		Random random = new Random();
+		return random.nextInt(100) >= 79; 
+	}
+	
+	public static boolean enemy_crit() {
+		// random stuff
+		Random random = new Random();
+		return random.nextInt(100) >= 79; 
 	}
 }
