@@ -2,6 +2,17 @@
 
 // TODO:
 		// second map
+		// comment EVERYTHING
+		// third pokemon on 1st level
+		
+// extra features include:
+		// multiple maps (incoming feature)
+			// lvl 1, and lvl 2
+		// Hero stats
+		// Damage Calculation formula 
+			// crit chance
+		// natural scaling.
+			// gain stats when you kill enemies
 
 import arc.*;
 import java.awt.image.BufferedImage;
