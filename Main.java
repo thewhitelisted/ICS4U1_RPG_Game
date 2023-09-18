@@ -28,7 +28,7 @@ public class Main {
 		start_menu(con);
 		
 		// map and textures, see function render_map()
-		String[][] strMap = load_map("map.csv");
+		String[][] strMap = load_map("map2.csv");
 		BufferedImage imgGrass = con.loadImage("grass.png");
 		BufferedImage imgTree = con.loadImage("tree.png");
 		BufferedImage imgWater = con.loadImage("water.png");
@@ -40,12 +40,14 @@ public class Main {
 		player.imgBattleicon = con.loadImage("player_battle.png");
 		int intKeyPressed;
 		
-		// enemy renders, make location random
-		Entity[] enemies = {new Entity(con.loadImage("squirtle.png"), 14, 13, 10, 15), new Entity(con.loadImage("charmander.png"), 3, 12, 15, 20)};
+		// enemy renders
+		Entity[] enemies = {new Entity(con.loadImage("squirtle.png"), 14, 13, 10, 15), new Entity(con.loadImage("charmander.png"), 3, 12, 15, 20), new Entity(con.loadImage("chris.png"), 7, 17, 20, 25)};
 		enemies[0].imgBattleicon = con.loadImage("squirtle_battle.png");
 		enemies[0].imgDMG = con.loadImage("squirtle_atk.png");
 		enemies[1].imgBattleicon = con.loadImage("charmander_battle.png");
 		enemies[1].imgDMG = con.loadImage("charmander_atk.png");
+		enemies[2].imgBattleicon = con.loadImage("chris_battle.png");
+		enemies[2].imgDMG = con.loadImage("chris_atk.png");
 		
 		// main loop
 		while (true) {
