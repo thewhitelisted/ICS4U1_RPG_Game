@@ -28,7 +28,8 @@ public class Main {
 		start_menu(con);
 		
 		// map and textures, see function render_map()
-		String[][] strMap = load_map("map2.csv");
+		int intlvl = 1;
+		String[][] strMap = load_map("map.csv");
 		BufferedImage imgGrass = con.loadImage("grass.png");
 		BufferedImage imgTree = con.loadImage("tree.png");
 		BufferedImage imgWater = con.loadImage("water.png");
@@ -92,6 +93,27 @@ public class Main {
 			if (player.intphp < 1) {
 				death_menu(con);
 			}
+			
+			if (won_level(enemies)) {
+				intlvl++;
+				if (intlvl > 2) {
+					win_menu(con);
+				} else {
+					level_win(con);
+				}
+				player.intpx = 4;
+				player.intpy = 4;
+				strMap = load_map("map2.csv");
+				enemies[0] = new Entity(con.loadImage("squirtle.png"), 4, 15, 10, 15);
+				enemies[1] = new Entity(con.loadImage("charmander.png"), 15, 15, 15, 20) ;
+				enemies[2] = new Entity(con.loadImage("chris.png"), 15, 4, 20, 25);
+				enemies[0].imgBattleicon = con.loadImage("squirtle_battle.png");
+				enemies[0].imgDMG = con.loadImage("squirtle_atk.png");
+				enemies[1].imgBattleicon = con.loadImage("charmander_battle.png");
+				enemies[1].imgDMG = con.loadImage("charmander_atk.png");
+				enemies[2].imgBattleicon = con.loadImage("chris_battle.png");
+				enemies[2].imgDMG = con.loadImage("chris_atk.png");
+			}
 		}
 	}
 	
@@ -122,6 +144,23 @@ public class Main {
 		}
 		con.closeConsole();
 		
+	}
+	
+	public static void level_win(Console con) {
+		reset_screen(con);
+		con.drawString("You Won the level!", 440, 250);
+		con.drawString("Press any key to ccontinue to the next level", 275, 300);
+		con.getKey();
+		con.sleep(2500);
+	}
+	
+	public static void win_menu(Console con) {
+		reset_screen(con);
+		con.drawString("You WON the GAME!!!", 440, 250);
+		con.drawString("Press any key to close prompt", 325, 300);
+		con.getKey();
+		con.sleep(2500);
+		con.closeConsole();
 	}
 	
 	// function to display player stats
@@ -183,7 +222,7 @@ public class Main {
 	// function to render enemies on the map
 	public static void render_enemies(Console con, Entity[] enemies) {
 		for (int i = 0; i < enemies.length; i++) {
-			if (enemies[i].intphp > 1) {
+			if (enemies[i].intphp > 0) {
 				con.drawImage(enemies[i].icon(), enemies[i].intpx * 30, enemies[i].intpy * 30);
 			}
 		}
@@ -324,5 +363,14 @@ public class Main {
 		// random stuff
 		Random random = new Random();
 		return random.nextInt(100) >= 79; 
+	}
+	
+	public static boolean won_level(Entity entities[]){
+		for (int i = 0; i < entities.length; i++){
+			if (entities[i].intphp > 0){
+				return false;
+			}
+		}
+		return true;
 	}
 }
