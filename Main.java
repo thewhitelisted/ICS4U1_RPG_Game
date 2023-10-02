@@ -104,9 +104,9 @@ public class Main {
 				player.intpx = 4;
 				player.intpy = 4;
 				strMap = load_map("map2.csv");
-				enemies[0] = new Entity(con.loadImage("squirtle.png"), 4, 15, 10, 15);
-				enemies[1] = new Entity(con.loadImage("charmander.png"), 15, 15, 15, 20) ;
-				enemies[2] = new Entity(con.loadImage("chris.png"), 15, 4, 20, 25);
+				enemies[0] = new Entity(con.loadImage("squirtle.png"), 4, 15, 30, 35);
+				enemies[1] = new Entity(con.loadImage("charmander.png"), 15, 15, 35, 40) ;
+				enemies[2] = new Entity(con.loadImage("chris.png"), 15, 4, 40, 45);
 				enemies[0].imgBattleicon = con.loadImage("squirtle_battle.png");
 				enemies[0].imgDMG = con.loadImage("squirtle_atk.png");
 				enemies[1].imgBattleicon = con.loadImage("charmander_battle.png");
@@ -149,7 +149,7 @@ public class Main {
 	public static void level_win(Console con) {
 		reset_screen(con);
 		con.drawString("You Won the level!", 440, 250);
-		con.drawString("Press any key to ccontinue to the next level", 275, 300);
+		con.drawString("Press any key to continue to the next level", 275, 300);
 		con.getKey();
 		con.sleep(2500);
 	}
@@ -356,13 +356,13 @@ public class Main {
 	public static boolean crit_check() {
 		// random stuff
 		Random random = new Random();
-		return random.nextInt(100) >= 79; 
+		return random.nextInt(100) >= 64; 
 	}
 	
 	public static boolean enemy_crit() {
 		// random stuff
 		Random random = new Random();
-		return random.nextInt(100) >= 79; 
+		return random.nextInt(100) >= 64; 
 	}
 	
 	public static boolean won_level(Entity entities[]){
